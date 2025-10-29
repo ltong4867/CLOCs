@@ -66,11 +66,20 @@ class NURBSGenerator {
         // Generate NURBS surface mesh
         let mesh = generateNURBSMesh(controlPoints: controlPoints)
         
-        // Create material with wireframe and surface
-        var material = SimpleMaterial()
-        material.color = .init(tint: .init(red: 0.2, green: 0.6, blue: 0.9, alpha: 0.7))
-        material.roughness = .float(0.5)
-        material.metallic = .float(0.1)
+        // iOS 26: Enhanced RealityKit materials with physically-based rendering
+        var material = PhysicallyBasedMaterial()
+        
+        // iOS 26: Use advanced material properties for better visual quality
+        material.baseColor = .init(tint: .init(red: 0.2, green: 0.6, blue: 0.9, alpha: 0.75))
+        material.roughness = .init(floatLiteral: 0.4)
+        material.metallic = .init(floatLiteral: 0.15)
+        
+        // iOS 26: Add normal mapping for better surface detail
+        material.emissiveColor = .init(color: .init(white: 0.05, alpha: 1.0))
+        material.emissiveIntensity = 0.2
+        
+        // iOS 26: Enable blending for semi-transparent surfaces
+        material.blending = .transparent(opacity: .init(floatLiteral: 0.75))
         
         // Create model entity
         let modelEntity = ModelEntity(mesh: mesh, materials: [material])

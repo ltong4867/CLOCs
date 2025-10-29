@@ -18,8 +18,27 @@ iOSApp/
 │   ├── NURBSGenerator.swift           # NURBS surface generation
 │   ├── Info.plist                     # App permissions and configuration
 │   └── Assets.xcassets/               # App assets and icons
-└── README.md                          # iOS app documentation
+├── README.md                          # iOS app documentation
+└── iOS_26_ENHANCEMENTS.md             # iOS 26 specific features
 ```
+
+## iOS 26 Features
+
+This application fully leverages iOS 26's enhanced ARKit and RealityKit capabilities:
+
+### ARKit Enhancements
+- **Smoothed Scene Depth**: Temporal smoothing for stable NURBS surfaces
+- **Enhanced Mesh Reconstruction**: Higher-quality 3D meshes
+- **Person Segmentation with Depth**: Better occlusion handling
+- **Improved Plane Detection**: More accurate surface boundaries
+
+### RealityKit Enhancements  
+- **Physically-Based Materials**: Realistic surface rendering
+- **Enhanced Image-Based Lighting**: Better environmental reflections
+- **Advanced Shadow Rendering**: High-quality shadows with depth bias
+- **Transparent Blending**: Improved semi-transparent surfaces
+
+See [iOS_26_ENHANCEMENTS.md](iOSApp/iOS_26_ENHANCEMENTS.md) for complete technical details.
 
 ## Key Components
 

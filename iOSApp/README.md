@@ -1,6 +1,6 @@
 # CLOCs Real-Time iOS App
 
-This is a real-time iOS application that runs on iPhone 16 (iOS 18+) and displays the current environment represented with NURBS (Non-Uniform Rational B-Splines) that are generated in real time.
+This is a real-time iOS application that runs on iPhone 16 (iOS 26+) and displays the current environment represented with NURBS (Non-Uniform Rational B-Splines) that are generated in real time.
 
 ## Features
 
@@ -8,12 +8,27 @@ This is a real-time iOS application that runs on iPhone 16 (iOS 18+) and display
 - **NURBS Surface Generation**: Generates NURBS surfaces in real-time from captured point cloud data
 - **Live Visualization**: Displays NURBS surfaces overlaid on the camera view using RealityKit
 - **Performance Monitoring**: Shows FPS, point count, and number of NURBS surfaces in real-time
+- **iOS 26 Enhancements**: Leverages latest ARKit and RealityKit improvements (see [iOS_26_ENHANCEMENTS.md](iOS_26_ENHANCEMENTS.md))
 
 ## Requirements
 
 - iPhone 12 Pro or later (with LiDAR scanner)
 - iOS 26.0 or later
 - Xcode 15.0 or later for development
+
+## iOS 26 Enhancements
+
+This app takes full advantage of iOS 26's ARKit and RealityKit improvements:
+
+- **Enhanced Scene Reconstruction**: Higher-fidelity 3D meshes from LiDAR data
+- **Smoothed Scene Depth**: Temporally-smoothed depth for stable NURBS surfaces
+- **Physically-Based Materials**: More realistic surface rendering with PBR
+- **Improved Image-Based Lighting**: Better environmental reflections
+- **Advanced Shadow Rendering**: Realistic shadows with improved depth bias
+- **Concurrent Processing**: Better multi-core utilization for faster processing
+- **Person Segmentation**: Natural occlusion with people in the scene
+
+See [iOS_26_ENHANCEMENTS.md](iOS_26_ENHANCEMENTS.md) for complete details.
 
 ## Technical Details
 

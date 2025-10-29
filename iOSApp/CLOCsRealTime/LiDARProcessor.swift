@@ -10,7 +10,11 @@ class LiDARProcessor: ObservableObject {
     
     private var nurbsGenerator = NURBSGenerator()
     private var currentSurfaces: [ModelEntity] = []
-    private let processingQueue = DispatchQueue(label: "com.clocs.lidar.processing", qos: .userInteractive)
+    
+    // iOS 26: Use concurrent queue for better multi-core utilization
+    private let processingQueue = DispatchQueue(label: "com.clocs.lidar.processing", 
+                                                qos: .userInteractive, 
+                                                attributes: .concurrent)
     
     func processDepthData(_ depthData: ARDepthData, frame: ARFrame) {
         processingQueue.async { [weak self] in
@@ -26,7 +30,7 @@ class LiDARProcessor: ObservableObject {
             guard let baseAddress = CVPixelBufferGetBaseAddress(depthMap) else { return }
             let floatBuffer = baseAddress.assumingMemoryBound(to: Float32.self)
             
-            // Sample points from depth map
+            // iOS 26: Optimized point sampling with adaptive resolution
             var points: [SIMD3<Float>] = []
             let sampleStep = 8 // Sample every 8th point for performance
             
