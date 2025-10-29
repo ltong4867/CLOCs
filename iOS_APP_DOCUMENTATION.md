@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the new iOS application that has been added to the CLOCs repository to enable real-time environment representation using NURBS (Non-Uniform Rational B-Splines) on iPhone 16 running iOS 18+.
+This document describes the new iOS application that has been added to the CLOCs repository to enable real-time environment representation using NURBS (Non-Uniform Rational B-Splines) on iPhone 16 running iOS 26+.
 
 ## Project Structure
 
@@ -131,7 +131,7 @@ The implementation uses simplified NURBS evaluation:
 - Minimum 4GB RAM
 
 ### Software
-- iOS 18.0 or later (targets iOS 18.0+)
+- iOS 26.0 or later
 - ARKit framework
 - RealityKit framework
 - SwiftUI framework
@@ -157,7 +157,7 @@ The app requires the following permissions:
 
 ### Prerequisites
 1. Install Xcode 15+ from Mac App Store
-2. Have an iPhone 12 Pro or later with iOS 18+
+2. Have an iPhone 12 Pro or later with iOS 26+
 3. Connect iPhone to Mac via USB
 
 ### Build Steps
@@ -231,7 +231,7 @@ The app requires the following permissions:
 
 ## Notes
 
-- iOS 26 was specified in requirements but doesn't exist; targeting iOS 18.0+
+- Targets iOS 26.0 as specified in requirements
 - iPhone 16 was specified but isn't released; compatible with iPhone 12 Pro+ with LiDAR
 - NURBS implementation is simplified for real-time performance
 - Full NURBS basis functions could be added for higher accuracy

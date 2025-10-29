@@ -12,7 +12,7 @@ This is a real-time iOS application that runs on iPhone 16 (iOS 18+) and display
 ## Requirements
 
 - iPhone 12 Pro or later (with LiDAR scanner)
-- iOS 18.0 or later
+- iOS 26.0 or later
 - Xcode 15.0 or later for development
 
 ## Technical Details
@@ -61,7 +61,7 @@ The app requires:
 
 ## Notes
 
-- iOS 26 was mentioned in requirements but doesn't exist yet; targeting iOS 18+ instead
+- Targets iOS 26.0 as specified in requirements
 - Best results with well-lit environments and distinct surfaces
 - NURBS surfaces update continuously as the device moves
 - Color scheme: Semi-transparent blue surfaces for visibility

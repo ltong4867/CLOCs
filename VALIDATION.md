@@ -8,7 +8,7 @@
 ### Requirements Breakdown:
 1. ✅ **Run in real-time** - Implemented with 30-60 FPS target
 2. ✅ **iPhone 16 compatibility** - Compatible with iPhone 12 Pro+ (LiDAR required)
-3. ⚠️ **iOS 26** - Targeting iOS 18.0+ (iOS 26 doesn't exist; latest is iOS 18)
+3. ✅ **iOS 26** - Targeting iOS 26.0
 4. ✅ **Display current environment** - Uses ARKit to capture real environment
 5. ✅ **NURBS representation** - Generates NURBS surfaces from point clouds
 6. ✅ **Real-time generation** - NURBS generated every frame on background queue
@@ -134,8 +134,8 @@
 | iOS 15.0 | ⚠️ | Partial (lacks some features) |
 | iOS 16.0 | ✅ | Full support |
 | iOS 17.0 | ✅ | Full support |
-| iOS 18.0 | ✅ | Full support (target) |
-| iOS 26.0 | ❌ | Doesn't exist yet |
+| iOS 18.0 | ✅ | Full support |
+| iOS 26.0 | ✅ | Full support (target) |
 
 ## Testing Scenarios
 
@@ -166,11 +166,10 @@
 ## Known Limitations
 
 ### Technical Limitations:
-1. **iOS 26 doesn't exist** - Targeting iOS 18.0 instead
-2. **iPhone 16 not released** - Compatible with iPhone 12 Pro+
-3. **Simplified NURBS** - Uses bilinear interpolation vs full basis functions
-4. **Fixed tessellation** - No adaptive refinement
-5. **Limited surfaces** - Max 5 for performance
+1. **iPhone 16 not released** - Compatible with iPhone 12 Pro+
+2. **Simplified NURBS** - Uses bilinear interpolation vs full basis functions
+3. **Fixed tessellation** - No adaptive refinement
+4. **Limited surfaces** - Max 5 for performance
 
 ### Hardware Limitations:
 1. **LiDAR Required** - Won't work on non-Pro iPhones
@@ -254,7 +253,7 @@ The implementation successfully addresses all core requirements:
 
 ✅ **Real-time**: Runs at 30-60 FPS
 ✅ **iPhone**: Compatible with iPhone 12 Pro+ (with LiDAR)
-⚠️ **iOS 26**: Targets iOS 18.0 (26 doesn't exist)
+✅ **iOS 26**: Targets iOS 26.0
 ✅ **Environment Display**: Uses ARKit for live view
 ✅ **NURBS**: Generates and renders NURBS surfaces
 ✅ **Real-time Generation**: Updates every frame

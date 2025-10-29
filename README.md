@@ -14,7 +14,7 @@ A new iOS application has been added that runs in real-time on iPhone (with LiDA
 - Live AR visualization with RealityKit
 - Performance monitoring (FPS, point count, surface count)
 
-**Requirements:** iPhone 12 Pro or later with LiDAR, iOS 18.0+
+**Requirements:** iPhone 12 Pro or later with LiDAR, iOS 26.0+
 
 See [iOSApp/README.md](iOSApp/README.md) and [iOS_APP_DOCUMENTATION.md](iOS_APP_DOCUMENTATION.md) for details.
 
