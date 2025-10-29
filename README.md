@@ -4,6 +4,20 @@ CLOCs is a novel Camera-LiDAR Object Candidates fusion network. It provides a lo
 
 ### CLOCs achieves new best performance in KITTI 3D detection leaderboard (82.28%) through fusing CT3D and Cascade-RCNN, code will be updated soon.
 
+## 🆕 Real-Time iOS App with NURBS
+
+A new iOS application has been added that runs in real-time on iPhone (with LiDAR) and displays the current environment represented with NURBS (Non-Uniform Rational B-Splines) generated in real-time.
+
+**Features:**
+- Real-time LiDAR capture using ARKit
+- NURBS surface generation from point clouds
+- Live AR visualization with RealityKit
+- Performance monitoring (FPS, point count, surface count)
+
+**Requirements:** iPhone 12 Pro or later with LiDAR, iOS 18.0+
+
+See [iOSApp/README.md](iOSApp/README.md) and [iOS_APP_DOCUMENTATION.md](iOS_APP_DOCUMENTATION.md) for details.
+
 ## Environment
 Tested on python3.6/3.7, pytorch 1.1.0/1.7.1, Ubuntu 16.04/18.04.
 
