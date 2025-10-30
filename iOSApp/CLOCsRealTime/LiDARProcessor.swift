@@ -27,7 +27,10 @@ class LiDARProcessor: ObservableObject {
             CVPixelBufferLockBaseAddress(depthMap, .readOnly)
             defer { CVPixelBufferUnlockBaseAddress(depthMap, .readOnly) }
             
-            guard let baseAddress = CVPixelBufferGetBaseAddress(depthMap) else { return }
+            guard let baseAddress = CVPixelBufferGetBaseAddress(depthMap) else {
+                print("Error: Could not get base address of depth map")
+                return
+            }
             let floatBuffer = baseAddress.assumingMemoryBound(to: Float32.self)
             
             // Optimized point sampling with adaptive resolution
@@ -59,16 +62,24 @@ class LiDARProcessor: ObservableObject {
                 }
             }
             
+            // Debug log on first successful processing
+            if points.count > 0 {
+                print("Processed \(points.count) points from depth map (size: \(width)x\(height))")
+            }
+            
             DispatchQueue.main.async {
                 self.pointCount = points.count
             }
             
             // Generate NURBS surfaces from point cloud
-            let surfaces = self.nurbsGenerator.generateSurfaces(from: points)
-            
-            DispatchQueue.main.async {
-                self.currentSurfaces = surfaces
-                self.nurbsSurfaceCount = surfaces.count
+            if points.count > 0 {
+                let surfaces = self.nurbsGenerator.generateSurfaces(from: points)
+                print("Generated \(surfaces.count) NURBS surfaces")
+                
+                DispatchQueue.main.async {
+                    self.currentSurfaces = surfaces
+                    self.nurbsSurfaceCount = surfaces.count
+                }
             }
         }
     }
@@ -92,16 +103,24 @@ class LiDARProcessor: ObservableObject {
                 }
             }
             
+            // Debug log
+            if allPoints.count > 0 {
+                print("Processed \(allPoints.count) points from \(meshAnchors.count) mesh anchors")
+            }
+            
             DispatchQueue.main.async {
                 self.pointCount = allPoints.count
             }
             
             // Generate NURBS surfaces from mesh vertices
-            let surfaces = self.nurbsGenerator.generateSurfaces(from: allPoints)
-            
-            DispatchQueue.main.async {
-                self.currentSurfaces = surfaces
-                self.nurbsSurfaceCount = surfaces.count
+            if allPoints.count > 0 {
+                let surfaces = self.nurbsGenerator.generateSurfaces(from: allPoints)
+                print("Generated \(surfaces.count) NURBS surfaces from mesh")
+                
+                DispatchQueue.main.async {
+                    self.currentSurfaces = surfaces
+                    self.nurbsSurfaceCount = surfaces.count
+                }
             }
         }
     }
@@ -111,15 +130,26 @@ class LiDARProcessor: ObservableObject {
     }
     
     private func unprojectPoint(x: Float, y: Float, depth: Float, intrinsics: simd_float3x3, transform: simd_float4x4) -> SIMD3<Float> {
-        // Convert normalized coordinates to pixel coordinates
+        // Camera intrinsics matrix format:
+        // [fx  0  cx]
+        // [0  fy  cy]
+        // [0   0   1]
         let fx = intrinsics[0][0]
         let fy = intrinsics[1][1]
-        let cx = intrinsics[2][0]
-        let cy = intrinsics[2][1]
+        let cx = intrinsics[0][2]
+        let cy = intrinsics[1][2]
         
-        // Calculate camera space coordinates
-        let xCam = (x * Float(intrinsics[2][0]) * 2.0 - cx) * depth / fx
-        let yCam = (y * Float(intrinsics[2][1]) * 2.0 - cy) * depth / fy
+        // Get image dimensions from the intrinsics
+        let imageWidth = cx * 2.0
+        let imageHeight = cy * 2.0
+        
+        // Convert normalized coordinates (0-1) to pixel coordinates
+        let pixelX = x * imageWidth
+        let pixelY = y * imageHeight
+        
+        // Calculate camera space coordinates using pinhole camera model
+        let xCam = (pixelX - cx) * depth / fx
+        let yCam = (pixelY - cy) * depth / fy
         let zCam = depth
         
         // Transform to world space

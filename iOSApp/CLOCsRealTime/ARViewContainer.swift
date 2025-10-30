@@ -9,12 +9,17 @@ struct ARViewContainer: UIViewRepresentable {
     func makeUIView(context: Context) -> ARView {
         let arView = ARView(frame: .zero)
         
+        // Set up coordinator first
+        context.coordinator.arView = arView
+        context.coordinator.lidarProcessor = lidarProcessor
+        
         // Configure AR session for LiDAR
         let config = ARWorldTrackingConfiguration()
         
         // Enable scene reconstruction if available
         if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
             config.sceneReconstruction = .mesh
+            print("Scene reconstruction enabled")
         }
         
         // Enable plane detection
@@ -24,26 +29,29 @@ struct ARViewContainer: UIViewRepresentable {
         // Enable depth sensing if available
         if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
             config.frameSemantics.insert(.sceneDepth)
+            print("Scene depth enabled")
         }
         
         // Enable smoothed scene depth if available (iOS 14+)
         if #available(iOS 14.0, *) {
             if ARWorldTrackingConfiguration.supportsFrameSemantics(.smoothedSceneDepth) {
                 config.frameSemantics.insert(.smoothedSceneDepth)
+                print("Smoothed scene depth enabled")
             }
         }
         
         // Enable person segmentation with depth if available
         if ARWorldTrackingConfiguration.supportsFrameSemantics(.personSegmentationWithDepth) {
             config.frameSemantics.insert(.personSegmentationWithDepth)
+            print("Person segmentation with depth enabled")
         }
+        
+        // Set delegate before running session
+        arView.session.delegate = context.coordinator
         
         // Run AR session with error handling
         arView.session.run(config, options: [.resetTracking, .removeExistingAnchors])
-        arView.session.delegate = context.coordinator
-        
-        context.coordinator.arView = arView
-        context.coordinator.lidarProcessor = lidarProcessor
+        print("AR session started")
         
         // Configure lighting
         arView.environment.lighting.intensityExponent = 1.0
@@ -77,37 +85,62 @@ struct ARViewContainer: UIViewRepresentable {
         private var cachedAnchors: [String: AnchorEntity] = [:]
         
         func session(_ session: ARSession, didUpdate frame: ARFrame) {
-            guard let lidarProcessor = lidarProcessor else { return }
+            guard let lidarProcessor = lidarProcessor else { 
+                print("Warning: lidarProcessor is nil in session callback")
+                return 
+            }
             
-            // Calculate FPS
+            // Calculate FPS - this should always work if frames are coming in
             frameCount += 1
             let now = Date()
             let elapsed = now.timeIntervalSince(lastUpdateTime)
             if elapsed >= 1.0 {
+                let currentFPS = Double(self.frameCount) / elapsed
+                print("FPS: \(currentFPS)")
                 DispatchQueue.main.async {
-                    lidarProcessor.fps = Double(self.frameCount) / elapsed
+                    lidarProcessor.fps = currentFPS
                 }
                 frameCount = 0
                 lastUpdateTime = now
             }
             
-            // Process depth data if available
-            if let depthData = frame.sceneDepth {
-                lidarProcessor.processDepthData(depthData, frame: frame)
-                
-                // Generate and display NURBS surfaces
-                if let arView = arView {
-                    updateNURBSVisualization(in: arView, processor: lidarProcessor)
+            // Try multiple sources for depth data
+            var depthProcessed = false
+            
+            // First try smoothed scene depth (iOS 14+)
+            if #available(iOS 14.0, *) {
+                if let depthData = frame.smoothedSceneDepth {
+                    lidarProcessor.processDepthData(depthData, frame: frame)
+                    depthProcessed = true
                 }
             }
             
-            // Also process mesh anchors
+            // Fall back to regular scene depth
+            if !depthProcessed, let depthData = frame.sceneDepth {
+                lidarProcessor.processDepthData(depthData, frame: frame)
+                depthProcessed = true
+            }
+            
+            // Update visualization if depth was processed
+            if depthProcessed, let arView = arView {
+                updateNURBSVisualization(in: arView, processor: lidarProcessor)
+            }
+            
+            // Also process mesh anchors (alternative to depth data)
             let meshAnchors = frame.anchors.compactMap({ $0 as? ARMeshAnchor })
             if !meshAnchors.isEmpty {
                 lidarProcessor.processMeshAnchors(meshAnchors)
                 
                 if let arView = arView {
                     updateNURBSVisualization(in: arView, processor: lidarProcessor)
+                }
+            }
+            
+            // Debug: Log if no data is available
+            if !depthProcessed && meshAnchors.isEmpty {
+                // Only log occasionally to avoid spam
+                if frameCount == 1 {
+                    print("Warning: No depth data or mesh anchors available. Ensure device has LiDAR and scene depth is enabled.")
                 }
             }
         }
