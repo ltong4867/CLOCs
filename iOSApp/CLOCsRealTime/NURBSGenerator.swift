@@ -3,21 +3,20 @@ import RealityKit
 import simd
 
 class NURBSGenerator {
-    // NURBS parameters
-    private let degree = 3 // Cubic NURBS
+    // Grid parameters
     private let gridSize = 10 // Grid resolution for control points
     
-    func generateSurfaces(from points: [SIMD3<Float>]) -> [ModelEntity] {
+    func generateSurfaces(from points: [SIMD3<Float>]) -> [(surface: ModelEntity, centroid: SIMD3<Float>)] {
         guard points.count > 16 else { return [] }
         
         // Cluster points into regions for separate NURBS surfaces
         let clusters = clusterPoints(points, maxClusters: 5)
         
-        var surfaces: [ModelEntity] = []
+        var surfaces: [(surface: ModelEntity, centroid: SIMD3<Float>)] = []
         
         for cluster in clusters {
-            if let surface = createNURBSSurface(from: cluster) {
-                surfaces.append(surface)
+            if let result = createNURBSSurface(from: cluster) {
+                surfaces.append(result)
             }
         }
         
@@ -31,10 +30,10 @@ class NURBSGenerator {
         
         while !remaining.isEmpty && clusters.count < maxClusters {
             var currentCluster: [SIMD3<Float>] = []
-            let seed = remaining.removeFirst()
+            let seed = remaining.removeLast() // O(1) instead of removeFirst()
             currentCluster.append(seed)
             
-            // Find nearby points
+            // Find nearby points using swap-remove pattern for O(1) deletions
             let threshold: Float = 1.0 // 1 meter radius
             var i = 0
             while i < remaining.count {
@@ -43,7 +42,9 @@ class NURBSGenerator {
                 
                 if distance < threshold {
                     currentCluster.append(point)
-                    remaining.remove(at: i)
+                    // Swap with last element and remove - O(1) operation
+                    remaining.swapAt(i, remaining.count - 1)
+                    remaining.removeLast()
                 } else {
                     i += 1
                 }
@@ -57,34 +58,34 @@ class NURBSGenerator {
         return clusters
     }
     
-    private func createNURBSSurface(from points: [SIMD3<Float>]) -> ModelEntity? {
+    private func createNURBSSurface(from points: [SIMD3<Float>]) -> (surface: ModelEntity, centroid: SIMD3<Float>)? {
         guard points.count >= 9 else { return nil }
         
-        // Create a grid of control points from the point cloud
-        let controlPoints = createControlPointGrid(from: points, gridSize: gridSize)
+        // Calculate centroid of the cluster
+        var centroid = SIMD3<Float>(0, 0, 0)
+        for point in points {
+            centroid += point
+        }
+        centroid /= Float(points.count)
         
-        // Generate NURBS surface mesh
+        // Transform points to local space around centroid
+        let localPoints = points.map { $0 - centroid }
+        
+        // Create a grid of control points from the point cloud in local space
+        let controlPoints = createControlPointGrid(from: localPoints, gridSize: gridSize)
+        
+        // Generate NURBS surface mesh in local space
         let mesh = generateNURBSMesh(controlPoints: controlPoints)
         
-        // iOS 26: Enhanced RealityKit materials with physically-based rendering
-        var material = PhysicallyBasedMaterial()
-        
-        // iOS 26: Use advanced material properties for better visual quality
-        material.baseColor = .init(tint: .init(red: 0.2, green: 0.6, blue: 0.9, alpha: 0.75))
-        material.roughness = .init(floatLiteral: 0.4)
-        material.metallic = .init(floatLiteral: 0.15)
-        
-        // iOS 26: Add normal mapping for better surface detail
-        material.emissiveColor = .init(color: .init(white: 0.05, alpha: 1.0))
-        material.emissiveIntensity = 0.2
-        
-        // iOS 26: Enable blending for semi-transparent surfaces
-        material.blending = .transparent(opacity: .init(floatLiteral: 0.75))
+        // Use initializer-based SimpleMaterial API for better compatibility
+        var material = SimpleMaterial(color: .init(red: 0.2, green: 0.6, blue: 0.9, alpha: 0.75),
+                                      roughness: 0.4,
+                                      isMetallic: false)
         
         // Create model entity
         let modelEntity = ModelEntity(mesh: mesh, materials: [material])
         
-        return modelEntity
+        return (surface: modelEntity, centroid: centroid)
     }
     
     private func createControlPointGrid(from points: [SIMD3<Float>], gridSize: Int) -> [[SIMD3<Float>]] {
@@ -159,8 +160,8 @@ class NURBSGenerator {
                 let u = Float(i) / Float(resolution - 1)
                 let v = Float(j) / Float(resolution - 1)
                 
-                // Simple bilinear interpolation (simplified NURBS evaluation)
-                let position = evaluateNURBS(controlPoints: controlPoints, u: u, v: v)
+                // Bilinear surface evaluation (simplified approach)
+                let position = evaluateSurface(controlPoints: controlPoints, u: u, v: v)
                 positions.append(position)
             }
         }
@@ -185,11 +186,33 @@ class NURBSGenerator {
             }
         }
         
-        // Calculate normals
-        for i in 0..<positions.count {
-            // Simple normal calculation
-            let normal = SIMD3<Float>(0, 1, 0)
-            normals.append(normalize(normal))
+        // Calculate normals per-vertex from triangle faces
+        normals = Array(repeating: SIMD3<Float>(0, 0, 0), count: positions.count)
+        
+        // Accumulate face normals for each vertex
+        for i in stride(from: 0, to: indices.count, by: 3) {
+            let i0 = Int(indices[i])
+            let i1 = Int(indices[i + 1])
+            let i2 = Int(indices[i + 2])
+            
+            let p0 = positions[i0]
+            let p1 = positions[i1]
+            let p2 = positions[i2]
+            
+            // Calculate face normal using cross product
+            let edge1 = p1 - p0
+            let edge2 = p2 - p0
+            let faceNormal = cross(edge1, edge2)
+            
+            // Accumulate to vertex normals
+            normals[i0] += faceNormal
+            normals[i1] += faceNormal
+            normals[i2] += faceNormal
+        }
+        
+        // Normalize all vertex normals
+        for i in 0..<normals.count {
+            normals[i] = normalize(normals[i])
         }
         
         // Create mesh descriptor
@@ -207,11 +230,12 @@ class NURBSGenerator {
         }
     }
     
-    private func evaluateNURBS(controlPoints: [[SIMD3<Float>]], u: Float, v: Float) -> SIMD3<Float> {
+    private func evaluateSurface(controlPoints: [[SIMD3<Float>]], u: Float, v: Float) -> SIMD3<Float> {
         let rows = controlPoints.count
         let cols = controlPoints[0].count
         
-        // Bilinear interpolation as simplified NURBS evaluation
+        // Bilinear interpolation for surface evaluation
+        // NOTE: This is a simplified approximation, not true NURBS with basis functions
         let i = min(Int(u * Float(rows - 1)), rows - 2)
         let j = min(Int(v * Float(cols - 1)), cols - 2)
         

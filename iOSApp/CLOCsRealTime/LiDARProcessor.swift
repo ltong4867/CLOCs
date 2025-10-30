@@ -9,11 +9,11 @@ class LiDARProcessor: ObservableObject {
     @Published var nurbsSurfaceCount: Int = 0
     
     private var nurbsGenerator = NURBSGenerator()
-    private var currentSurfaces: [ModelEntity] = []
+    private var currentSurfaces: [(surface: ModelEntity, centroid: SIMD3<Float>)] = []
     
-    // iOS 26: Use concurrent queue for better multi-core utilization
+    // Use .userInitiated QoS for background processing without blocking UI
     private let processingQueue = DispatchQueue(label: "com.clocs.lidar.processing", 
-                                                qos: .userInteractive, 
+                                                qos: .userInitiated, 
                                                 attributes: .concurrent)
     
     func processDepthData(_ depthData: ARDepthData, frame: ARFrame) {
@@ -106,7 +106,7 @@ class LiDARProcessor: ObservableObject {
         }
     }
     
-    func getNURBSSurfaces() -> [ModelEntity] {
+    func getNURBSSurfaces() -> [(surface: ModelEntity, centroid: SIMD3<Float>)] {
         return currentSurfaces
     }
     

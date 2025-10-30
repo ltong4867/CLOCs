@@ -6,7 +6,7 @@ This document describes the new iOS application that has been added to the CLOCs
 
 ## Project Structure
 
-```
+```text
 iOSApp/
 ├── CLOCsRealTime.xcodeproj/
 │   └── project.pbxproj                 # Xcode project configuration
@@ -251,7 +251,7 @@ The app requires the following permissions:
 ## Notes
 
 - Targets iOS 26.0 as specified in requirements
-- iPhone 16 was specified but isn't released; compatible with iPhone 12 Pro+ with LiDAR
+- <iPhone 16 was specified but isn't released; compatible with iPhone 12 Pro+ with LiDAR>
 - NURBS implementation is simplified for real-time performance
 - Full NURBS basis functions could be added for higher accuracy
 

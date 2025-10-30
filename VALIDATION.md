@@ -115,6 +115,7 @@
 ## Compatibility Matrix
 
 ### Supported Devices:
+
 | Device | LiDAR | Supported | Notes |
 |--------|-------|-----------|-------|
 | iPhone 12 Pro | ✅ | ✅ | Minimum requirement |
@@ -128,6 +129,7 @@
 | iPhone 16 (future) | ✅* | ✅* | *Assuming LiDAR |
 
 ### iOS Version Compatibility:
+
 | iOS Version | Supported | Notes |
 |-------------|-----------|-------|
 | iOS 14.0 | ⚠️ | Partial (lacks some features) |

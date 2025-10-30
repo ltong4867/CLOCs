@@ -142,7 +142,7 @@ In `LiDARProcessor.swift`:
 2. **Process**: Depth maps converted to 3D point clouds
 3. **Cluster**: Points grouped into spatial regions
 4. **Fit**: NURBS control points fitted to each cluster
-5. **Evaluate**: Surface sampled at high resolution
+5. **Evaluate**: Surface sampled at high-resolution
 6. **Render**: Triangle mesh displayed with RealityKit
 
 ## Next Steps
