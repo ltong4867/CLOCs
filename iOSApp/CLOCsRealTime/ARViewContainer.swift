@@ -104,7 +104,8 @@ struct ARViewContainer: UIViewRepresentable {
             }
             
             // Also process mesh anchors
-            if let meshAnchors = frame.anchors.compactMap({ $0 as? ARMeshAnchor }), !meshAnchors.isEmpty {
+            let meshAnchors = frame.anchors.compactMap({ $0 as? ARMeshAnchor })
+            if !meshAnchors.isEmpty {
                 lidarProcessor.processMeshAnchors(meshAnchors)
                 
                 if let arView = arView {

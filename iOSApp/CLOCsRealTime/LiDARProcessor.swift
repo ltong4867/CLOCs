@@ -85,7 +85,7 @@ class LiDARProcessor: ObservableObject {
                 let transform = meshAnchor.transform
                 
                 // Extract vertex positions
-                for i in 0..<vertices.count {
+                for i in 0..<Int(vertices.count) {
                     let vertex = vertices[i]
                     let worldPosition = transform * SIMD4<Float>(vertex.0, vertex.1, vertex.2, 1.0)
                     allPoints.append(SIMD3<Float>(worldPosition.x, worldPosition.y, worldPosition.z))
