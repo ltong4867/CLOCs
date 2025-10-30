@@ -38,7 +38,8 @@ struct ARViewContainer: UIViewRepresentable {
             config.frameSemantics.insert(.personSegmentationWithDepth)
         }
         
-        arView.session.run(config)
+        // Run AR session with error handling
+        arView.session.run(config, options: [.resetTracking, .removeExistingAnchors])
         arView.session.delegate = context.coordinator
         
         context.coordinator.arView = arView
@@ -109,6 +110,49 @@ struct ARViewContainer: UIViewRepresentable {
                     updateNURBSVisualization(in: arView, processor: lidarProcessor)
                 }
             }
+        }
+        
+        func session(_ session: ARSession, didFailWithError error: Error) {
+            // Handle session errors gracefully
+            print("AR Session failed with error: \(error.localizedDescription)")
+            
+            // Attempt to recover by restarting the session
+            guard let arView = arView else { return }
+            let config = ARWorldTrackingConfiguration()
+            
+            if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
+                config.sceneReconstruction = .mesh
+            }
+            config.planeDetection = [.horizontal, .vertical]
+            
+            if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
+                config.frameSemantics.insert(.sceneDepth)
+            }
+            
+            arView.session.run(config, options: [.resetTracking, .removeExistingAnchors])
+        }
+        
+        func sessionWasInterrupted(_ session: ARSession) {
+            // Handle session interruption (e.g., user switches apps)
+            print("AR Session was interrupted")
+        }
+        
+        func sessionInterruptionEnded(_ session: ARSession) {
+            // Resume session after interruption
+            print("AR Session interruption ended")
+            guard let arView = arView else { return }
+            let config = ARWorldTrackingConfiguration()
+            
+            if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
+                config.sceneReconstruction = .mesh
+            }
+            config.planeDetection = [.horizontal, .vertical]
+            
+            if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
+                config.frameSemantics.insert(.sceneDepth)
+            }
+            
+            arView.session.run(config, options: [.resetTracking, .removeExistingAnchors])
         }
         
         private func updateNURBSVisualization(in arView: ARView, processor: LiDARProcessor) {
