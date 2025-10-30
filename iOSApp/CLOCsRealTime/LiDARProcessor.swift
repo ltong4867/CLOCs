@@ -97,7 +97,7 @@ class LiDARProcessor: ObservableObject {
                 
                 // Extract vertex positions
                 guard vertices.format == .float3 else {
-                    print("Warning: Unexpected vertex format, expected float3")
+                    print("Warning: Unexpected vertex format \(vertices.format), expected float3")
                     continue
                 }
                 
@@ -109,7 +109,7 @@ class LiDARProcessor: ObservableObject {
                 for i in 0..<vertexCount {
                     let offset = i * vertexStride
                     // Ensure we don't read beyond buffer bounds
-                    guard offset + MemoryLayout<SIMD3<Float>>.size <= bufferLength else {
+                    guard offset + vertexStride <= bufferLength else {
                         print("Warning: Vertex buffer access out of bounds")
                         break
                     }
