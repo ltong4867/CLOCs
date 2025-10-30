@@ -13,11 +13,11 @@
 ### Files Changed: 14 files
 - Modified: 10 files
 - Added: 3 new documentation files
-- Renamed: 1 file (iOS_26_ENHANCEMENTS.md → iOS_17_ENHANCEMENTS.md)
+- Renamed: 1 file (iOS_26_ENHANCEMENTS.md → iOS_26_ENHANCEMENTS.md)
 
 ## Critical Bugs Fixed
 
-### 1. iOS 26.0 → iOS 17.0 (Build Blocker)
+### 1. iOS 26.0 → iOS 26.0 (Build Blocker)
 **Impact:** Without this fix, the app cannot build or deploy to any device.
 
 ### 2. Camera Intrinsics Bug (Data Corruption)
@@ -41,7 +41,7 @@ Before marking this as complete, the following MUST be tested on a **physical de
 
 ### Pre-Testing Setup
 - [ ] Device: iPhone 12 Pro, 13 Pro, 14 Pro, 15 Pro, or iPad Pro (2020+)
-- [ ] iOS Version: 17.0 or later
+- [ ] iOS Version: 26.0 or later
 - [ ] Xcode connected via cable
 - [ ] Device unlocked
 - [ ] Console visible in Xcode (⌘⇧C)
@@ -149,7 +149,7 @@ NURBS Surfaces: 3
 **Symptom:** Cannot build in Xcode
 **Likely Cause:** Deployment target issue not fully resolved
 **Debug:** Check project.pbxproj for IPHONEOS_DEPLOYMENT_TARGET
-**Solution:** Should be 17.0, not 26.0
+**Solution:** Should be 26.0, not 26.0
 
 ## Known Acceptable Warnings
 

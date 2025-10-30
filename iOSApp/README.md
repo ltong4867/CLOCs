@@ -1,6 +1,6 @@
 # CLOCs Real-Time iOS App
 
-This is a real-time iOS application that runs on iPhone 12 Pro or later (iOS 17+) and displays the current environment represented with NURBS (Non-Uniform Rational B-Splines) that are generated in real time.
+This is a real-time iOS application that runs on iPhone 16 (iOS 26+) and displays the current environment represented with NURBS (Non-Uniform Rational B-Splines) that are generated in real time.
 
 ## Features
 
@@ -8,17 +8,17 @@ This is a real-time iOS application that runs on iPhone 12 Pro or later (iOS 17+
 - **NURBS Surface Generation**: Generates NURBS surfaces in real-time from captured point cloud data
 - **Live Visualization**: Displays NURBS surfaces overlaid on the camera view using RealityKit
 - **Performance Monitoring**: Shows FPS, point count, and number of NURBS surfaces in real-time
-- **iOS 17 Enhancements**: Leverages latest ARKit and RealityKit improvements (see [iOS_17_ENHANCEMENTS.md](iOS_17_ENHANCEMENTS.md))
+- **iOS 26 Enhancements**: Leverages latest ARKit and RealityKit improvements (see [iOS_26_ENHANCEMENTS.md](iOS_26_ENHANCEMENTS.md))
 
 ## Requirements
 
 - iPhone 12 Pro or later (with LiDAR scanner)
-- iOS 17.0 or later
+- iOS 26.0 or later
 - Xcode 15.0 or later for development
 
-## iOS 17 Enhancements
+## iOS 26 Enhancements
 
-This app takes full advantage of iOS 17's ARKit and RealityKit improvements:
+This app takes full advantage of iOS 26's ARKit and RealityKit improvements:
 
 - **Enhanced Scene Reconstruction**: Higher-fidelity 3D meshes from LiDAR data
 - **Smoothed Scene Depth**: Temporally-smoothed depth for stable NURBS surfaces
@@ -28,7 +28,7 @@ This app takes full advantage of iOS 17's ARKit and RealityKit improvements:
 - **Concurrent Processing**: Better multi-core utilization for faster processing
 - **Person Segmentation**: Natural occlusion with people in the scene
 
-See [iOS_17_ENHANCEMENTS.md](iOS_17_ENHANCEMENTS.md) for complete details.
+See [iOS_26_ENHANCEMENTS.md](iOS_26_ENHANCEMENTS.md) for complete details.
 
 ## Technical Details
 
@@ -76,7 +76,7 @@ The app requires:
 
 ## Notes
 
-- Targets iOS 17.0 as specified in requirements
+- Targets iOS 26.0 as specified in requirements
 - Best results with well-lit environments and distinct surfaces
 - NURBS surfaces update continuously as the device moves
 - Color scheme: Semi-transparent blue surfaces for visibility

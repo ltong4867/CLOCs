@@ -16,7 +16,7 @@ If you're seeing FPS: 0.0, Points: 0, NURBS Surfaces: 0, follow this checklist:
   - Settings > Privacy > Camera > CLOCs Real-Time = ON
   - If changed, restart the app
 
-- [ ] **iOS version 17.0+?**
+- [ ] **iOS version 26.0+?**
   - Settings > General > About > Software Version
   - Update if needed
 
