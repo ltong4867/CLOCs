@@ -118,6 +118,7 @@ CLOCs/
 - **Metal**: GPU acceleration
 
 ### Performance Optimizations
+
 - Background queue processing
 - Point sampling (every 8th pixel)
 - Surface limiting (max 5)
@@ -251,7 +252,7 @@ RealityKit Rendering (60 FPS)
 ## ✅ Quality Assurance
 
 ### Code Quality
-- ✅ Type-safe Swift 5.0
+- ✅ Type-safe Swift 5.9+
 - ✅ Modern async/await patterns
 - ✅ Observable objects for state
 - ✅ Protocol conformance

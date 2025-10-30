@@ -2,7 +2,7 @@
 
 ## System Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                          iOS Device (iPhone 16+)                 │
 │                                                                   │
@@ -68,7 +68,7 @@
 
 ## Data Flow
 
-```
+```text
 Hardware Layer
     ↓
   LiDAR Scanner → Depth Map (256×192 @ 60Hz)
@@ -186,7 +186,7 @@ GPU Rendering (Metal)
 
 ## Threading Model
 
-```
+```text
 ┌─────────────────────────────────────────────────┐
 │              Main Thread                         │
 │  - UI updates                                    │
