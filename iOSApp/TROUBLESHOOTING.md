@@ -72,6 +72,59 @@ warning: using linearization / solving fallback.
 
 ## Actual Errors to Address
 
+### FPS, Points, and Surfaces Staying at Zero
+
+**Symptom:** The info overlay shows FPS: 0.0, Points: 0, NURBS Surfaces: 0 and nothing updates
+
+**Possible Causes:**
+1. Device doesn't have LiDAR scanner
+2. AR session not properly initialized
+3. Camera permissions not granted
+4. Depth data feature not supported on device/OS version
+
+**Solutions:**
+
+1. **Check Device Compatibility:**
+   - Ensure you're using iPhone 12 Pro or later, OR iPad Pro (2020+)
+   - Simulator does NOT work - must be physical device
+   - Check Settings > General > About - confirm LiDAR scanner presence
+
+2. **Verify Permissions:**
+   - Go to Settings > Privacy & Security > Camera
+   - Ensure "CLOCs Real-Time" has camera access enabled
+   - Restart app after granting permissions
+
+3. **Check Console Logs** (in Xcode):
+   - Connect device to Xcode
+   - Run app and open Console (⌘⇧C)
+   - Look for these diagnostic messages:
+     - "AR session started" - confirms session initialization
+     - "Scene depth enabled" - confirms LiDAR feature is available
+     - "FPS: [number]" - should appear every second if frames are being received
+     - "Processed X points from depth map" - confirms depth data is being processed
+   - If you see "Warning: No depth data or mesh anchors available" - LiDAR may not be supported
+
+4. **Force Restart AR Session:**
+   - Kill and restart the app
+   - If that doesn't work, restart the device
+
+5. **Check iOS Version:**
+   - Requires iOS 17.0 or later
+   - Some features work better on iOS 18+
+   - Update to latest iOS if possible
+
+6. **Environmental Factors:**
+   - LiDAR requires objects/surfaces in view to generate depth data
+   - Point camera at walls, furniture, or other surfaces (not empty sky)
+   - Ensure adequate lighting (not pitch black)
+   - Start with camera pointed at a nearby surface (0.5-2 meters)
+
+**Debug Steps:**
+If issues persist, check Xcode console for these specific messages:
+- "lidarProcessor is nil" → App initialization issue, restart app
+- "Could not get base address of depth map" → Device/OS incompatibility
+- No FPS messages at all → AR session delegate not receiving callbacks
+
 ### LiDAR Not Available
 
 **Error:** App crashes or shows "LiDAR not supported"
