@@ -7,7 +7,7 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             ARViewContainer(lidarProcessor: lidarProcessor)
-                .edgesIgnoringSafeArea(.all)
+                .ignoresSafeArea()
             
             VStack {
                 if showInfo {
@@ -21,12 +21,15 @@ struct ContentView: View {
                                 .foregroundColor(.white)
                             Text("FPS: \(lidarProcessor.fps, specifier: "%.1f")")
                                 .font(.caption)
+                                .monospacedDigit()
                                 .foregroundColor(.green)
                             Text("Points: \(lidarProcessor.pointCount)")
                                 .font(.caption)
+                                .monospacedDigit()
                                 .foregroundColor(.cyan)
                             Text("NURBS Surfaces: \(lidarProcessor.nurbsSurfaceCount)")
                                 .font(.caption)
+                                .monospacedDigit()
                                 .foregroundColor(.yellow)
                         }
                         .padding()

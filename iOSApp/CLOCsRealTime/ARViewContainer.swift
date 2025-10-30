@@ -76,6 +76,7 @@ struct ARViewContainer: UIViewRepresentable {
         var lidarProcessor: LiDARProcessor?
         private var lastUpdateTime = Date()
         private var frameCount = 0
+        private var cachedAnchors: [String: AnchorEntity] = [:]
         
         func session(_ session: ARSession, didUpdate frame: ARFrame) {
             guard let lidarProcessor = lidarProcessor else { return }
@@ -103,7 +104,7 @@ struct ARViewContainer: UIViewRepresentable {
             }
             
             // Also process mesh anchors
-            if let meshAnchors = frame.anchors.compactMap({ $0 as? ARMeshAnchor }) as? [ARMeshAnchor], !meshAnchors.isEmpty {
+            if let meshAnchors = frame.anchors.compactMap({ $0 as? ARMeshAnchor }), !meshAnchors.isEmpty {
                 lidarProcessor.processMeshAnchors(meshAnchors)
                 
                 if let arView = arView {
@@ -113,18 +114,39 @@ struct ARViewContainer: UIViewRepresentable {
         }
         
         private func updateNURBSVisualization(in arView: ARView, processor: LiDARProcessor) {
-            // iOS 26: Use efficient anchor management for better performance
-            // Remove old NURBS surfaces with batch operations
-            let oldAnchors = arView.scene.anchors.filter { $0.name.hasPrefix("nurbs_") }
-            oldAnchors.forEach { arView.scene.removeAnchor($0) }
-            
-            // iOS 26: Add new NURBS surfaces with enhanced materials
+            // Use efficient anchor management with diff-based updates
             let surfaces = processor.getNURBSSurfaces()
-            for (index, surface) in surfaces.enumerated() {
-                let anchor = AnchorEntity(world: .zero)
-                anchor.name = "nurbs_\(index)"
-                anchor.addChild(surface)
-                arView.scene.addAnchor(anchor)
+            
+            // Create a set of current surface names
+            var currentNames = Set<String>()
+            
+            // Update or add surfaces with proper coordinate space handling
+            for (index, surfaceData) in surfaces.enumerated() {
+                let anchorName = "nurbs_\(index)"
+                currentNames.insert(anchorName)
+                
+                if let existingAnchor = cachedAnchors[anchorName] {
+                    // Update existing anchor's position and child if content changed
+                    existingAnchor.position = surfaceData.centroid
+                    existingAnchor.children.removeAll()
+                    existingAnchor.addChild(surfaceData.surface)
+                } else {
+                    // Create new anchor at the centroid position
+                    let anchor = AnchorEntity(world: surfaceData.centroid)
+                    anchor.name = anchorName
+                    anchor.addChild(surfaceData.surface)
+                    arView.scene.addAnchor(anchor)
+                    cachedAnchors[anchorName] = anchor
+                }
+            }
+            
+            // Remove anchors that are no longer needed
+            let anchorsToRemove = cachedAnchors.keys.filter { !currentNames.contains($0) }
+            for anchorName in anchorsToRemove {
+                if let anchor = cachedAnchors[anchorName] {
+                    arView.scene.removeAnchor(anchor)
+                    cachedAnchors.removeValue(forKey: anchorName)
+                }
             }
         }
     }
