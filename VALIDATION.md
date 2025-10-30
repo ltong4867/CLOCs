@@ -135,7 +135,7 @@
 | iOS 14.0 | ⚠️ | Partial (lacks some features) |
 | iOS 15.0 | ⚠️ | Partial (lacks some features) |
 | iOS 16.0 | ✅ | Full support |
-| iOS 17.0 | ✅ | Full support |
+| iOS 26.0 | ✅ | Full support |
 | iOS 18.0 | ✅ | Full support |
 | iOS 26.0 | ✅ | Full support (target) |
 

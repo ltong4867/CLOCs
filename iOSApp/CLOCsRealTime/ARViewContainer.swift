@@ -9,51 +9,57 @@ struct ARViewContainer: UIViewRepresentable {
     func makeUIView(context: Context) -> ARView {
         let arView = ARView(frame: .zero)
         
-        // Configure AR session for LiDAR with iOS 26 enhancements
-        let config = ARWorldTrackingConfiguration()
-        
-        // iOS 26: Enhanced scene reconstruction with improved mesh quality
-        if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
-            config.sceneReconstruction = .mesh
-        }
-        
-        // iOS 26: Enhanced plane detection with semantic classification
-        config.planeDetection = [.horizontal, .vertical]
-        config.environmentTexturing = .automatic
-        
-        // iOS 26: Improved depth sensing with higher resolution
-        if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
-            config.frameSemantics.insert(.sceneDepth)
-        }
-        
-        // iOS 26: Enable smooth depth for better NURBS fitting
-        if ARWorldTrackingConfiguration.supportsFrameSemantics(.smoothedSceneDepth) {
-            config.frameSemantics.insert(.smoothedSceneDepth)
-        }
-        
-        // iOS 26: Object occlusion for better AR integration
-        if ARWorldTrackingConfiguration.supportsFrameSemantics(.personSegmentationWithDepth) {
-            config.frameSemantics.insert(.personSegmentationWithDepth)
-        }
-        
-        arView.session.run(config)
-        arView.session.delegate = context.coordinator
-        
+        // Set up coordinator first
         context.coordinator.arView = arView
         context.coordinator.lidarProcessor = lidarProcessor
         
-        // iOS 26: Enhanced RealityKit lighting with image-based lighting
-        arView.environment.lighting.intensityExponent = 1.5
-        arView.environment.lighting.resource = nil // Use automatic IBL
+        // Configure AR session for LiDAR
+        let config = ARWorldTrackingConfiguration()
         
-        // Add dynamic lighting with iOS 26 improvements
+        // Enable scene reconstruction if available
+        if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
+            config.sceneReconstruction = .mesh
+            print("Scene reconstruction enabled")
+        }
+        
+        // Enable plane detection
+        config.planeDetection = [.horizontal, .vertical]
+        config.environmentTexturing = .automatic
+        
+        // Enable depth sensing if available
+        if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
+            config.frameSemantics.insert(.sceneDepth)
+            print("Scene depth enabled")
+        }
+        
+        // Enable smoothed scene depth if available (iOS 14+)
+        if #available(iOS 14.0, *) {
+            if ARWorldTrackingConfiguration.supportsFrameSemantics(.smoothedSceneDepth) {
+                config.frameSemantics.insert(.smoothedSceneDepth)
+                print("Smoothed scene depth enabled")
+            }
+        }
+        
+        // Enable person segmentation with depth if available
+        if ARWorldTrackingConfiguration.supportsFrameSemantics(.personSegmentationWithDepth) {
+            config.frameSemantics.insert(.personSegmentationWithDepth)
+            print("Person segmentation with depth enabled")
+        }
+        
+        // Set delegate before running session
+        arView.session.delegate = context.coordinator
+        
+        // Run AR session with error handling
+        arView.session.run(config, options: [.resetTracking, .removeExistingAnchors])
+        print("AR session started")
+        
+        // Configure lighting
+        arView.environment.lighting.intensityExponent = 1.0
+        
+        // Add directional light for better visualization
         let sunlight = DirectionalLight()
-        sunlight.light.intensity = 1000
+        sunlight.light.intensity = 500
         sunlight.light.color = .white
-        sunlight.shadow = DirectionalLightComponent.Shadow(
-            maximumDistance: 10.0,
-            depthBias: 5.0
-        )
         sunlight.look(at: [0, 0, 0], from: [0, 5, 5], relativeTo: nil)
         
         let lightAnchor = AnchorEntity(world: .zero)
@@ -79,31 +85,48 @@ struct ARViewContainer: UIViewRepresentable {
         private var cachedAnchors: [String: AnchorEntity] = [:]
         
         func session(_ session: ARSession, didUpdate frame: ARFrame) {
-            guard let lidarProcessor = lidarProcessor else { return }
+            guard let lidarProcessor = lidarProcessor else { 
+                print("Warning: lidarProcessor is nil in session callback")
+                return 
+            }
             
-            // Calculate FPS
+            // Calculate FPS - this should always work if frames are coming in
             frameCount += 1
             let now = Date()
             let elapsed = now.timeIntervalSince(lastUpdateTime)
             if elapsed >= 1.0 {
+                let currentFPS = Double(self.frameCount) / elapsed
+                print("FPS: \(currentFPS)")
                 DispatchQueue.main.async {
-                    lidarProcessor.fps = Double(self.frameCount) / elapsed
+                    lidarProcessor.fps = currentFPS
                 }
                 frameCount = 0
                 lastUpdateTime = now
             }
             
-            // Process depth data if available
-            if let depthData = frame.sceneDepth {
-                lidarProcessor.processDepthData(depthData, frame: frame)
-                
-                // Generate and display NURBS surfaces
-                if let arView = arView {
-                    updateNURBSVisualization(in: arView, processor: lidarProcessor)
+            // Try multiple sources for depth data
+            var depthProcessed = false
+            
+            // First try smoothed scene depth (iOS 14+)
+            if #available(iOS 14.0, *) {
+                if let depthData = frame.smoothedSceneDepth {
+                    lidarProcessor.processDepthData(depthData, frame: frame)
+                    depthProcessed = true
                 }
             }
             
-            // Also process mesh anchors
+            // Fall back to regular scene depth
+            if !depthProcessed, let depthData = frame.sceneDepth {
+                lidarProcessor.processDepthData(depthData, frame: frame)
+                depthProcessed = true
+            }
+            
+            // Update visualization if depth was processed
+            if depthProcessed, let arView = arView {
+                updateNURBSVisualization(in: arView, processor: lidarProcessor)
+            }
+            
+            // Also process mesh anchors (alternative to depth data)
             let meshAnchors = frame.anchors.compactMap({ $0 as? ARMeshAnchor })
             if !meshAnchors.isEmpty {
                 lidarProcessor.processMeshAnchors(meshAnchors)
@@ -112,6 +135,57 @@ struct ARViewContainer: UIViewRepresentable {
                     updateNURBSVisualization(in: arView, processor: lidarProcessor)
                 }
             }
+            
+            // Debug: Log if no data is available
+            if !depthProcessed && meshAnchors.isEmpty {
+                // Only log occasionally to avoid spam
+                if frameCount == 1 {
+                    print("Warning: No depth data or mesh anchors available. Ensure device has LiDAR and scene depth is enabled.")
+                }
+            }
+        }
+        
+        func session(_ session: ARSession, didFailWithError error: Error) {
+            // Handle session errors gracefully
+            print("AR Session failed with error: \(error.localizedDescription)")
+            
+            // Attempt to recover by restarting the session
+            guard let arView = arView else { return }
+            let config = ARWorldTrackingConfiguration()
+            
+            if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
+                config.sceneReconstruction = .mesh
+            }
+            config.planeDetection = [.horizontal, .vertical]
+            
+            if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
+                config.frameSemantics.insert(.sceneDepth)
+            }
+            
+            arView.session.run(config, options: [.resetTracking, .removeExistingAnchors])
+        }
+        
+        func sessionWasInterrupted(_ session: ARSession) {
+            // Handle session interruption (e.g., user switches apps)
+            print("AR Session was interrupted")
+        }
+        
+        func sessionInterruptionEnded(_ session: ARSession) {
+            // Resume session after interruption
+            print("AR Session interruption ended")
+            guard let arView = arView else { return }
+            let config = ARWorldTrackingConfiguration()
+            
+            if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
+                config.sceneReconstruction = .mesh
+            }
+            config.planeDetection = [.horizontal, .vertical]
+            
+            if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
+                config.frameSemantics.insert(.sceneDepth)
+            }
+            
+            arView.session.run(config, options: [.resetTracking, .removeExistingAnchors])
         }
         
         private func updateNURBSVisualization(in arView: ARView, processor: LiDARProcessor) {
