@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the new iOS application that has been added to the CLOCs repository to enable real-time environment representation using NURBS (Non-Uniform Rational B-Splines) on iPhone 16 running iOS 26+.
+This document describes the new iOS application that has been added to the CLOCs repository to enable real-time environment representation using NURBS (Non-Uniform Rational B-Splines) on iPhone 12 Pro or later running iOS 17+.
 
 ## Project Structure
 
@@ -19,12 +19,12 @@ iOSApp/
 │   ├── Info.plist                     # App permissions and configuration
 │   └── Assets.xcassets/               # App assets and icons
 ├── README.md                          # iOS app documentation
-└── iOS_26_ENHANCEMENTS.md             # iOS 26 specific features
+└── iOS_17_ENHANCEMENTS.md             # iOS 17 specific features
 ```
 
-## iOS 26 Features
+## iOS 17 Features
 
-This application fully leverages iOS 26's enhanced ARKit and RealityKit capabilities:
+This application fully leverages iOS 17's enhanced ARKit and RealityKit capabilities:
 
 ### ARKit Enhancements
 - **Smoothed Scene Depth**: Temporal smoothing for stable NURBS surfaces
@@ -38,7 +38,7 @@ This application fully leverages iOS 26's enhanced ARKit and RealityKit capabili
 - **Advanced Shadow Rendering**: High-quality shadows with depth bias
 - **Transparent Blending**: Improved semi-transparent surfaces
 
-See [iOS_26_ENHANCEMENTS.md](iOSApp/iOS_26_ENHANCEMENTS.md) for complete technical details.
+See [iOS_17_ENHANCEMENTS.md](iOSApp/iOS_17_ENHANCEMENTS.md) for complete technical details.
 
 ## Key Components
 
@@ -150,7 +150,7 @@ The implementation uses simplified NURBS evaluation:
 - Minimum 4GB RAM
 
 ### Software
-- iOS 26.0 or later
+- iOS 17.0 or later
 - ARKit framework
 - RealityKit framework
 - SwiftUI framework
@@ -176,7 +176,7 @@ The app requires the following permissions:
 
 ### Prerequisites
 1. Install Xcode 15+ from Mac App Store
-2. Have an iPhone 12 Pro or later with iOS 26+
+2. Have an iPhone 12 Pro or later with iOS 17+
 3. Connect iPhone to Mac via USB
 
 ### Build Steps
@@ -250,8 +250,8 @@ The app requires the following permissions:
 
 ## Notes
 
-- Targets iOS 26.0 as specified in requirements
-- <iPhone 16 was specified but isn't released; compatible with iPhone 12 Pro+ with LiDAR>
+- Targets iOS 17.0 as specified in requirements
+- <iPhone 12 Pro or later was specified but isn't released; compatible with iPhone 12 Pro+ with LiDAR>
 - NURBS implementation is simplified for real-time performance
 - Full NURBS basis functions could be added for higher accuracy
 

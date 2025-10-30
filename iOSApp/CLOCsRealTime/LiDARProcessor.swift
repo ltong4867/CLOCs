@@ -30,7 +30,7 @@ class LiDARProcessor: ObservableObject {
             guard let baseAddress = CVPixelBufferGetBaseAddress(depthMap) else { return }
             let floatBuffer = baseAddress.assumingMemoryBound(to: Float32.self)
             
-            // iOS 26: Optimized point sampling with adaptive resolution
+            // Optimized point sampling with adaptive resolution
             var points: [SIMD3<Float>] = []
             let sampleStep = 8 // Sample every 8th point for performance
             

@@ -6,6 +6,8 @@
 	<string>This app needs camera access to capture the environment for real-time NURBS generation.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs location access for AR world tracking.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>This app uses motion data to improve AR tracking accuracy.</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arkit</string>

@@ -53,7 +53,7 @@ A complete iOS application that transforms the offline CLOCs (Camera-LiDAR Objec
 |------------|--------|----------------|
 | Real-time operation | ✅ | 30-60 FPS processing |
 | iPhone 16 compatible | ✅ | Works on iPhone 12 Pro+ |
-| iOS 26 target | ✅ | iOS 26.0 |
+| iOS 17 target | ✅ | iOS 17.0 |
 | Environment display | ✅ | AR camera view |
 | NURBS representation | ✅ | Cubic NURBS surfaces |
 | Real-time generation | ✅ | Every frame updates |

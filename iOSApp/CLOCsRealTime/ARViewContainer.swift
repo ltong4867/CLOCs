@@ -9,29 +9,31 @@ struct ARViewContainer: UIViewRepresentable {
     func makeUIView(context: Context) -> ARView {
         let arView = ARView(frame: .zero)
         
-        // Configure AR session for LiDAR with iOS 26 enhancements
+        // Configure AR session for LiDAR
         let config = ARWorldTrackingConfiguration()
         
-        // iOS 26: Enhanced scene reconstruction with improved mesh quality
+        // Enable scene reconstruction if available
         if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
             config.sceneReconstruction = .mesh
         }
         
-        // iOS 26: Enhanced plane detection with semantic classification
+        // Enable plane detection
         config.planeDetection = [.horizontal, .vertical]
         config.environmentTexturing = .automatic
         
-        // iOS 26: Improved depth sensing with higher resolution
+        // Enable depth sensing if available
         if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
             config.frameSemantics.insert(.sceneDepth)
         }
         
-        // iOS 26: Enable smooth depth for better NURBS fitting
-        if ARWorldTrackingConfiguration.supportsFrameSemantics(.smoothedSceneDepth) {
-            config.frameSemantics.insert(.smoothedSceneDepth)
+        // Enable smoothed scene depth if available (iOS 14+)
+        if #available(iOS 14.0, *) {
+            if ARWorldTrackingConfiguration.supportsFrameSemantics(.smoothedSceneDepth) {
+                config.frameSemantics.insert(.smoothedSceneDepth)
+            }
         }
         
-        // iOS 26: Object occlusion for better AR integration
+        // Enable person segmentation with depth if available
         if ARWorldTrackingConfiguration.supportsFrameSemantics(.personSegmentationWithDepth) {
             config.frameSemantics.insert(.personSegmentationWithDepth)
         }
@@ -42,18 +44,13 @@ struct ARViewContainer: UIViewRepresentable {
         context.coordinator.arView = arView
         context.coordinator.lidarProcessor = lidarProcessor
         
-        // iOS 26: Enhanced RealityKit lighting with image-based lighting
-        arView.environment.lighting.intensityExponent = 1.5
-        arView.environment.lighting.resource = nil // Use automatic IBL
+        // Configure lighting
+        arView.environment.lighting.intensityExponent = 1.0
         
-        // Add dynamic lighting with iOS 26 improvements
+        // Add directional light for better visualization
         let sunlight = DirectionalLight()
-        sunlight.light.intensity = 1000
+        sunlight.light.intensity = 500
         sunlight.light.color = .white
-        sunlight.shadow = DirectionalLightComponent.Shadow(
-            maximumDistance: 10.0,
-            depthBias: 5.0
-        )
         sunlight.look(at: [0, 0, 0], from: [0, 5, 5], relativeTo: nil)
         
         let lightAnchor = AnchorEntity(world: .zero)
