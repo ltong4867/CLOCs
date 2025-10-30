@@ -110,3 +110,15 @@ venv.bak/
 # pretrained stuff
 /model_dir/
 /d2_detection_data
+
+# Xcode
+iOSApp/CLOCsRealTime.xcodeproj/xcuserdata/
+iOSApp/CLOCsRealTime.xcodeproj/project.xcworkspace/
+iOSApp/DerivedData/
+*.xcuserstate
+*.pbxuser
+
+# iOS build artifacts
+iOSApp/build/
+*.ipa
+*.dSYM.zip
