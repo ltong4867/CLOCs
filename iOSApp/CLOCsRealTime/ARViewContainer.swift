@@ -20,6 +20,8 @@ struct ARViewContainer: UIViewRepresentable {
         if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
             config.sceneReconstruction = .mesh
             print("Scene reconstruction enabled")
+        } else {
+            print("Scene reconstruction NOT supported on this device")
         }
         
         // Enable plane detection
@@ -30,6 +32,8 @@ struct ARViewContainer: UIViewRepresentable {
         if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
             config.frameSemantics.insert(.sceneDepth)
             print("Scene depth enabled")
+        } else {
+            print("Scene depth NOT supported on this device")
         }
         
         // Enable smoothed scene depth if available (iOS 14+)
@@ -37,6 +41,8 @@ struct ARViewContainer: UIViewRepresentable {
             if ARWorldTrackingConfiguration.supportsFrameSemantics(.smoothedSceneDepth) {
                 config.frameSemantics.insert(.smoothedSceneDepth)
                 print("Smoothed scene depth enabled")
+            } else {
+                print("Smoothed scene depth NOT supported on this device")
             }
         }
         
@@ -44,6 +50,8 @@ struct ARViewContainer: UIViewRepresentable {
         if ARWorldTrackingConfiguration.supportsFrameSemantics(.personSegmentationWithDepth) {
             config.frameSemantics.insert(.personSegmentationWithDepth)
             print("Person segmentation with depth enabled")
+        } else {
+            print("Person segmentation with depth NOT supported on this device")
         }
         
         // Set delegate before running session

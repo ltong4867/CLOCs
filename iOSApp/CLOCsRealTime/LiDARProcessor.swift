@@ -96,9 +96,27 @@ class LiDARProcessor: ObservableObject {
                 let transform = meshAnchor.transform
                 
                 // Extract vertex positions
-                for i in 0..<Int(vertices.count) {
-                    let vertex = vertices[i]
-                    let worldPosition = transform * SIMD4<Float>(vertex.0, vertex.1, vertex.2, 1.0)
+                guard vertices.format == .float3 else {
+                    print("Warning: Unexpected vertex format \(vertices.format), expected float3")
+                    continue
+                }
+                
+                let vertexCount = Int(vertices.count)
+                let vertexBuffer = vertices.buffer.contents()
+                let vertexStride = vertices.stride
+                let bufferLength = vertices.buffer.length
+                
+                for i in 0..<vertexCount {
+                    let offset = i * vertexStride
+                    // Ensure we don't read beyond buffer bounds
+                    guard offset + vertexStride <= bufferLength else {
+                        print("Warning: Vertex buffer access out of bounds")
+                        break
+                    }
+                    
+                    let vertexPointer = vertexBuffer.advanced(by: offset)
+                    let vertex = vertexPointer.assumingMemoryBound(to: SIMD3<Float>.self).pointee
+                    let worldPosition = transform * SIMD4<Float>(vertex.x, vertex.y, vertex.z, 1.0)
                     allPoints.append(SIMD3<Float>(worldPosition.x, worldPosition.y, worldPosition.z))
                 }
             }
