@@ -17,8 +17,8 @@
 
 ## Critical Bugs Fixed
 
-### 1. iOS 26.0 → iOS 26.0 (Build Blocker)
-**Impact:** Without this fix, the app cannot build or deploy to any device.
+### 1. iOS 16.0 deployment target (Build Configuration)
+**Impact:** Ensures the app can build and deploy to devices running iOS 16.0 or later.
 
 ### 2. Camera Intrinsics Bug (Data Corruption)
 **Location:** `LiDARProcessor.swift` line 113-130
@@ -41,7 +41,7 @@ Before marking this as complete, the following MUST be tested on a **physical de
 
 ### Pre-Testing Setup
 - [ ] Device: iPhone 12 Pro, 13 Pro, 14 Pro, 15 Pro, or iPad Pro (2020+)
-- [ ] iOS Version: 26.0 or later
+- [ ] iOS Version: 16.0 or later
 - [ ] Xcode connected via cable
 - [ ] Device unlocked
 - [ ] Console visible in Xcode (⌘⇧C)
@@ -149,7 +149,7 @@ NURBS Surfaces: 3
 **Symptom:** Cannot build in Xcode
 **Likely Cause:** Deployment target issue not fully resolved
 **Debug:** Check project.pbxproj for IPHONEOS_DEPLOYMENT_TARGET
-**Solution:** Should be 26.0, not 26.0
+**Solution:** Should be 16.0 minimum deployment target
 
 ## Known Acceptable Warnings
 

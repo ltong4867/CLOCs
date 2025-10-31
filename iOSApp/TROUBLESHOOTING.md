@@ -109,7 +109,7 @@ warning: using linearization / solving fallback.
    - If that doesn't work, restart the device
 
 5. **Check iOS Version:**
-   - Requires iOS 26.0 or later
+   - Requires iOS 16.0 or later
    - Some features work better on iOS 18+
    - Update to latest iOS if possible
 
@@ -202,7 +202,7 @@ This only hides the warnings in Xcode; they don't affect the app's behavior.
 
 ## Version Information
 
-- **Current iOS target:** 26.0
-- **Tested on:** iOS 26.x, 18.x
+- **Current iOS target:** 16.0
+- **Tested on:** iOS 16.x, 17.x, 18.x
 - **Required device:** iPhone 12 Pro or later with LiDAR
 - **Framework versions:** ARKit 6.0+, RealityKit 2.0+

@@ -3,12 +3,12 @@
 ## Requirement Analysis
 
 ### Original Requirements:
-> "Modify the app so that it can run in real time on an iPhone 16 as an iOS 26 app and displays the current environment represented with NURBs that are generated in real time."
+> "Modify the app so that it can run in real time on an iPhone 16 as an iOS 16.0+ app and displays the current environment represented with NURBs that are generated in real time."
 
 ### Requirements Breakdown:
 1. ✅ **Run in real-time** - Implemented with 30-60 FPS target
 2. ✅ **iPhone 16 compatibility** - Compatible with iPhone 12 Pro+ (LiDAR required)
-3. ✅ **iOS 26** - Targeting iOS 26.0
+3. ✅ **iOS 16** - Targeting iOS 16.0
 4. ✅ **Display current environment** - Uses ARKit to capture real environment
 5. ✅ **NURBS representation** - Generates NURBS surfaces from point clouds
 6. ✅ **Real-time generation** - NURBS generated every frame on background queue
@@ -135,9 +135,9 @@
 | iOS 14.0 | ⚠️ | Partial (lacks some features) |
 | iOS 15.0 | ⚠️ | Partial (lacks some features) |
 | iOS 16.0 | ✅ | Full support |
-| iOS 26.0 | ✅ | Full support |
+| iOS 16.0 | ✅ | Full support |
 | iOS 18.0 | ✅ | Full support |
-| iOS 26.0 | ✅ | Full support (target) |
+| iOS 16.0 | ✅ | Full support (target) |
 
 ## Testing Scenarios
 
@@ -255,7 +255,7 @@ The implementation successfully addresses all core requirements:
 
 ✅ **Real-time**: Runs at 30-60 FPS
 ✅ **iPhone**: Compatible with iPhone 12 Pro+ (with LiDAR)
-✅ **iOS 26**: Targets iOS 26.0
+✅ **iOS 16**: Targets iOS 16.0
 ✅ **Environment Display**: Uses ARKit for live view
 ✅ **NURBS**: Generates and renders NURBS surfaces
 ✅ **Real-time Generation**: Updates every frame

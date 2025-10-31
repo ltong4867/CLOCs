@@ -1,6 +1,6 @@
 # CLOCs Real-Time iOS App
 
-This is a real-time iOS application that runs on iPhone 16 (iOS 26+) and displays the current environment represented with NURBS (Non-Uniform Rational B-Splines) that are generated in real time.
+This is a real-time iOS application that runs on iPhone 16 (iOS 16.0+) and displays the current environment represented with NURBS (Non-Uniform Rational B-Splines) that are generated in real time.
 
 ## Features
 
@@ -8,17 +8,17 @@ This is a real-time iOS application that runs on iPhone 16 (iOS 26+) and display
 - **NURBS Surface Generation**: Generates NURBS surfaces in real-time from captured point cloud data
 - **Live Visualization**: Displays NURBS surfaces overlaid on the camera view using RealityKit
 - **Performance Monitoring**: Shows FPS, point count, and number of NURBS surfaces in real-time
-- **iOS 26 Enhancements**: Leverages latest ARKit and RealityKit improvements (see [iOS_26_ENHANCEMENTS.md](iOS_26_ENHANCEMENTS.md))
+- **iOS 16 Enhancements**: Leverages latest ARKit and RealityKit improvements (see [iOS_16_ENHANCEMENTS.md](iOS_16_ENHANCEMENTS.md))
 
 ## Requirements
 
 - iPhone 12 Pro or later (with LiDAR scanner)
-- iOS 26.0 or later
+- iOS 16.0 or later
 - Xcode 15.0 or later for development
 
-## iOS 26 Enhancements
+## iOS 16 Enhancements
 
-This app takes full advantage of iOS 26's ARKit and RealityKit improvements:
+This app takes full advantage of iOS 16's ARKit and RealityKit improvements:
 
 - **Enhanced Scene Reconstruction**: Higher-fidelity 3D meshes from LiDAR data
 - **Smoothed Scene Depth**: Temporally-smoothed depth for stable NURBS surfaces
@@ -76,7 +76,7 @@ The app requires:
 
 ## Notes
 
-- Targets iOS 26.0 as specified in requirements
+- Targets iOS 16.0 as specified in requirements
 - Best results with well-lit environments and distinct surfaces
 - NURBS surfaces update continuously as the device moves
 - Color scheme: Semi-transparent blue surfaces for visibility
